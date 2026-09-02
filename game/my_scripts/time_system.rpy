@@ -31,22 +31,6 @@ init -10 python:
         @property
         def weekday_name(self):
             return self.date.strftime("%A")
-			
-		def run_work_session(leaving_slot):
-			"""
-			Placeholder for the compressed "work session" mini-game that happens
-			between Morning->Midday and Midday->LateAfternoon (if the MC has a job).
-			Design TBD - currently a no-op.
-			"""
-			pass
-			
-		def advance_time():
-			leaving_slot = game_time.slot_index
-			game_time.advance_slot()
-			fired_this_slot_events.clear()
-
-			if leaving_slot in (SLOT_MORNING, SLOT_MIDDAY):
-				run_work_session(leaving_slot)
 
         def advance_slot(self):
             """
