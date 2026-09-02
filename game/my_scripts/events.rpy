@@ -8,7 +8,16 @@
 # event_type distinguishes:
 #   - "instant": fires automatically, no player choice involved.
 #   - "proposal": added to the menu the main loop offers the player.
+#
+# EVENTS is a content registry (like LOCATIONS/CHARACTER_TEMPLATES): filled
+# once at init time by the base game and by mods, then read-only during
+# play. Per-event PLAY STATE (which ones already fired) lives in the
+# `default` sets below instead.
 # ---------------------------------------------------------------------------
+
+init -11 python:
+    EVENTS = {}
+
 
 init -9 python:
 
@@ -48,17 +57,24 @@ init -9 python:
 
             return True
 
+
+    def register_event(event, override=False):
+        """Entry point for the base game AND for mods: registers an event."""
+        return _register(EVENTS, event.event_id, event, "event", override)
+
+
     def get_instant_event():
         """Returns the best-matching available "instant" event, or None."""
-        candidates = [e for e in EVENTS if e.event_type == "instant" and e.is_available()]
+        candidates = [e for e in EVENTS.values() if e.event_type == "instant" and e.is_available()]
         if not candidates:
             return None
         candidates.sort(key=lambda e: e.priority)
         return candidates[0]
 
+
     def get_proposal_events():
         """Returns every available "proposal" event, sorted by priority."""
-        candidates = [e for e in EVENTS if e.event_type == "proposal" and e.is_available()]
+        candidates = [e for e in EVENTS.values() if e.event_type == "proposal" and e.is_available()]
         candidates.sort(key=lambda e: e.priority)
         return candidates
 
@@ -70,44 +86,43 @@ default fired_this_slot_events = set()
 
 
 init -5 python:
-    # Placeholder event registry. Add real events here as they get written.
-    EVENTS = [
+    # Placeholder base-game events. Add real ones here as they get written.
+    # Mods add their own via register_event() from their own files - they
+    # never need to touch this block.
+    register_event(GameEvent(
+        "intro_wake_up",
+        "event_intro_wake_up",
+        locations=["starting_apartment"],
+        slots=[SLOT_MORNING],
+        priority=0,
+        repeatable=False,
+        event_type="instant",
+    ))
 
-        GameEvent(
-            "intro_wake_up",
-            "event_intro_wake_up",
-            locations=["starting_apartment"],
-            slots=[SLOT_MORNING],
-            priority=0,
-            repeatable=False,
-            event_type="instant",
-        ),
+    register_event(GameEvent(
+        "street_random_encounter",
+        "event_street_random_encounter",
+        locations=["downtown_street"],
+        slots=None,
+        condition=lambda: MC.fatigue < 5,
+        priority=50,
+        repeatable=True,
+        event_type="proposal",
+        menu_text="Look around downtown",
+    ))
 
-        GameEvent(
-            "street_random_encounter",
-            "event_street_random_encounter",
-            locations=["downtown_street"],
-            slots=None,
-            condition=lambda: MC.fatigue < 5,
-            priority=50,
-            repeatable=True,
-            event_type="proposal",
-            menu_text="Look around downtown",
-        ),
-
-        # Always-available fallback so the player always has at least one
-        # choice. Keep this last / lowest priority.
-        GameEvent(
-            "wait",
-            "event_wait",
-            locations=None,
-            slots=None,
-            priority=9999,
-            repeatable=True,
-            event_type="proposal",
-            menu_text="Wait until the next part of the day",
-        ),
-    ]
+    # Always-available fallback so the player always has at least one
+    # choice. Keep this last / lowest priority.
+    register_event(GameEvent(
+        "wait",
+        "event_wait",
+        locations=None,
+        slots=None,
+        priority=9999,
+        repeatable=True,
+        event_type="proposal",
+        menu_text="Wait until the next part of the day",
+    ))
 
 
 # --- Placeholder event labels ----------------------------------------------

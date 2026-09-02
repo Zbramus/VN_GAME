@@ -12,6 +12,9 @@
 # (from an event label or a menu choice, e.g. "wait") ends the current slot.
 # That's what lets several events chain within the same time slot before
 # the player/story decides to move on.
+#
+# See events.rpy for GameEvent/get_instant_event/get_proposal_events, and
+# minigames.rpy for the MINIGAMES registry used below.
 # ---------------------------------------------------------------------------
 
 init python:
@@ -23,17 +26,17 @@ init python:
 
     def run_work_session(leaving_slot):
         """
-        Placeholder for the compressed "work session" mini-game that happens
-        between Morning->Midday and Midday->LateAfternoon (if the MC has a
-        job). Design TBD - currently a no-op.
+        Runs the MC's work minigame, if they have one registered via
+        MC.job_minigame. Falls back to the "none" no-op minigame otherwise.
         """
-        pass
+        label = MINIGAMES.get(MC.job_minigame, MINIGAMES["none"])
+        renpy.call(label)
 
     def advance_time():
         """
         Ends the current time slot: advances the calendar, clears the
-        per-slot event tracking, and triggers the work session placeholder
-        when relevant. Call this from an event label or a player choice.
+        per-slot event tracking, and triggers the work session hook when
+        relevant. Call this from an event label or a player choice.
         """
         leaving_slot = game_time.slot_index
         game_time.advance_slot()

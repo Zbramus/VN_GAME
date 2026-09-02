@@ -3,7 +3,16 @@
 # Defines the Location class and the registry of every place characters can
 # be in (real world or in-game). Events can filter on location, and
 # characters track which location they are currently in.
+#
+# Locations are content, not player state: they're all registered during
+# the init phase (base-game locations here, mod locations from mod files)
+# and don't change while the game is being played. That's why LOCATIONS is
+# a plain init-time dict rather than a `default` store variable.
 # ---------------------------------------------------------------------------
+
+init -11 python:
+    LOCATIONS = {}
+
 
 init -10 python:
 
@@ -25,6 +34,11 @@ init -10 python:
             return self.display_name
 
 
+    def register_location(location, override=False):
+        """Entry point for the base game AND for mods: registers a location."""
+        return _register(LOCATIONS, location.location_id, location, "location", override)
+
+
     def get_location(location_id):
         """Looks up a Location by id. Returns None if it doesn't exist."""
         return LOCATIONS.get(location_id)
@@ -35,27 +49,28 @@ init -10 python:
         return get_location(MC.location)
 
 
-# Placeholder registry of locations. Add more as the map grows.
-define LOCATIONS = {
-    "starting_apartment": Location(
+init -9 python:
+    # Placeholder base-game locations. Add more as the map grows. Mods add
+    # their own via register_location() from their own files - they never
+    # need to touch this block.
+    register_location(Location(
         "starting_apartment",
         "Your Apartment",
         "bg_placeholder_apartment",
         description="Placeholder - the MC's apartment in the real world.",
         tags=["real_world", "indoor"],
-    ),
-    "downtown_street": Location(
+    ))
+    register_location(Location(
         "downtown_street",
         "Downtown Street",
         "bg_placeholder_street",
         description="Placeholder - a street in the MC's city.",
         tags=["real_world", "outdoor"],
-    ),
-    "guild_hall": Location(
+    ))
+    register_location(Location(
         "guild_hall",
         "Guild Hall",
         "bg_placeholder_guildhall",
         description="Placeholder - the guild's headquarters inside the game.",
         tags=["in_game", "indoor"],
-    ),
-}
+    ))
