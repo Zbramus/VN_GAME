@@ -24,7 +24,7 @@ init -9 python:
     class GameEvent(object):
 
         def __init__(self, event_id, label, locations=None, slots=None, condition=None,
-                     priority=100, repeatable=False, event_type="proposal", menu_text=None):
+                    priority=100, repeatable=False, event_type="proposal", menu_text=None):
 
             self.event_id = event_id
             self.label = label

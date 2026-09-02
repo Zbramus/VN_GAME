@@ -23,7 +23,7 @@ init -10 python:
     def start_combat(encounter_data=None):
         """Call this to trigger combat; dispatches to the active combat system."""
         label = COMBAT_SYSTEMS.get(active_combat_system, COMBAT_SYSTEMS["none"])
-        renpy.call(label, encounter_data)
+        return renpy.call(label, encounter_data)
 
 
 init -9 python:

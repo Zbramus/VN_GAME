@@ -28,7 +28,7 @@ init -10 python:
     class GameCharacter(object):
 
         def __init__(self, display_name, real_sprite_tag, game_sprite_tag,
-                     location="unknown", mood="neutral", color=None, **character_kwargs):
+                    location="unknown", mood="neutral", color=None, **character_kwargs):
 
             self.display_name = display_name
             self.real_sprite_tag = real_sprite_tag   # human appearance, shown in the real world
