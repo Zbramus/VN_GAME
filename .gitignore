@@ -1,0 +1,32 @@
+# Sauvegardes de jeu (spécifiques à chaque machine/joueur)
+game/saves/
+game/saves*/
+
+# Fichiers compilés Ren'Py (régénérés automatiquement)
+**/*.rpyc
+**/*.rpymc
+cache/
+game/cache/
+
+# Builds / distributions générées
+*-dists/
+*.apk
+*.zip
+game/bytecode.rpyb
+
+# Fichiers système
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs et fichiers temporaires
+*.log
+*.tmp
+*~
+
+# Config d'éditeurs courants (optionnel, décommente si utile)
+# .vscode/
+# .idea/
+
+# Fichiers persistants du lanceur Ren'Py (préférences locales)
+game/persistent
