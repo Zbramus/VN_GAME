@@ -1,32 +1,44 @@
 ﻿I'm sorry, but an uncaught exception occurred.
 
 While running game code:
+NameError: name 'tp_icon_prefix' is not defined
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
   File "game/my_scripts/main_loop.rpy", line 56, in script call
     call expression instant_event.label from _call_expr_main_loop_instant
   File "game/my_scripts/events.rpy", line 131, in script
     "// Placeholder event: intro_wake_up"
-  File "game/my_scripts/quick_menu.rpy", line 49, in execute
-    screen quick_menu():
-  File "game/my_scripts/quick_menu.rpy", line 49, in execute
-    screen quick_menu():
-  File "game/my_scripts/quick_menu.rpy", line 66, in execute
-    fixed:
-  File "game/my_scripts/quick_menu.rpy", line 73, in execute
-    if qm_expanded:
-  File "game/my_scripts/quick_menu.rpy", line 74, in execute
-    frame:
-  File "game/my_scripts/quick_menu.rpy", line 80, in execute
-    grid qm_grid_cols qm_grid_rows:
-  File "game/my_scripts/quick_menu.rpy", line 95, in execute
-    imagebutton:
-  File "game/my_scripts/quick_menu.rpy", line 95, in keywords
-    imagebutton:
-  File "game/my_scripts/quick_menu.rpy", line 100, in <module>
-    selected preferences.auto_forward
-             ^^^^^^^^^^^^^^^^^^^^^^^^
-AttributeError: 'Preferences' object has no attribute 'auto_forward'
+Exception: In DynamicImage 'gui/button/quick_menu/[tp_icon_prefix]_idle.png': NameError("name 'tp_icon_prefix' is not defined")
 
 -- Full Traceback ------------------------------------------------------------
+
+Traceback (most recent call last):
+  File "renpy/display/image.py", line 683, in find_target
+    target = renpy.easy.dynamic_image(self.name, scope, prefix=prefix, search=search)
+             ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "renpy/easy.py", line 200, in dynamic_image
+    rv = renpy.substitutions.substitute(i, scope=scope, force=True, translate=False)[0]
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^   
+  File "renpy/substitutions.py", line 355, in substitute
+    s = interpolate(s, variables)  # type: ignore
+        ~~~~~~~~~~~^^^^^^^^^^^^^^                
+  File "renpy/substitutions.py", line 89, in interpolate
+    raise e
+  File "renpy/substitutions.py", line 81, in interpolate
+    value = renpy.python.py_eval(code, {}, scope)
+            ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "renpy/python.py", line 1308, in py_eval
+    return py_eval_bytecode(code, globals, locals)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "renpy/python.py", line 1301, in py_eval_bytecode
+    return eval(bytecode, globals, locals)
+           ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<none>", line 1, in <module>
+NameError: name 'tp_icon_prefix' is not defined
+
+During handling of the above exception, another exception occurred:
 
 Traceback (most recent call last):
   File "game/my_scripts/main_loop.rpy", line 56, in script call
@@ -36,24 +48,28 @@ Traceback (most recent call last):
   File "renpy/ast.py", line 2935, in execute
     Say.execute(self)
     ~~~~~~~~~~~^^^^^^
-  File "renpy/ast.py", line 994, in execute
-    renpy.exports.say(who, what, *args, **kwargs)
-    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "renpy/exports/sayexports.py", line 129, in say
-    who(what, *args, **kwargs)
-    ~~~^^^^^^^^^^^^^^^^^^^^^^^
-  File "renpy/character.py", line 1565, in __call__
-    self.do_display(who, what, cb_args=self.cb_args, dtt=dtt, **display_args)
-    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "renpy/character.py", line 1220, in do_display
-    display_say(who, what, self.do_show, **display_args)
-    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "renpy/character.py", line 902, in display_say
-    rv = renpy.ui.interact(mouse="say", type=type, roll_forward=roll_forward)
-         ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "renpy/ui.py", line 306, in interact
-    rv = renpy.game.interface.interact(roll_forward=roll_forward, **kwargs)
-         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "renpy/ast.py", line 965, in execute
+    statement_name(stmt_name)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "renpy/ast.py", line 547, in statement_name
+    i(name)
+    ~^^^^^^
+  File "renpy/common/000window.rpy", line 132, in _window_auto_callback
+    _window_show(auto=True)
+    ~~~~~~~~~~~~^^^^^^^^^^^
+  File "renpy/common/000window.rpy", line 75, in _window_show
+    renpy.with_statement(trans)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "renpy/exports/statementexports.py", line 253, in with_statement
+    return renpy.game.interface.do_with(trans, paired, clear=clear)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "renpy/display/core.py", line 1478, in do_with
+    return self.interact(
+           ~~~~~~~~~~~~~^
+        trans_pause=True, suppress_overlay=not renpy.config.overlay_during_with, mouse="with", clear=clear
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
   File "renpy/display/core.py", line 2163, in interact
     repeat, rv = self.interact_core(
                  ~~~~~~~~~~~~~~~~~~^
@@ -76,46 +92,31 @@ Traceback (most recent call last):
   File "renpy/display/displayable.py", line 460, in visit_all
     d.visit_all(callback, seen)
     ~~~~~~~~~~~^^^^^^^^^^^^^^^^
-  File "renpy/display/screen.py", line 503, in visit_all
-    callback(self)
-    ~~~~~~~~^^^^^^
-  File "renpy/display/core.py", line 2709, in <lambda>
-    root_widget.visit_all(lambda d: d.per_interact())
-                                    ~~~~~~~~~~~~~~^^ 
-  File "renpy/display/screen.py", line 514, in per_interact
-    self.update()
-    ~~~~~~~~~~~^^
-  File "renpy/display/screen.py", line 715, in update
-    self.screen.function(**self.scope)
-    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
-  File "game/my_scripts/quick_menu.rpy", line 49, in execute
-    screen quick_menu():
-  File "game/my_scripts/quick_menu.rpy", line 49, in execute
-    screen quick_menu():
-  File "game/my_scripts/quick_menu.rpy", line 66, in execute
-    fixed:
-  File "game/my_scripts/quick_menu.rpy", line 73, in execute
-    if qm_expanded:
-  File "game/my_scripts/quick_menu.rpy", line 74, in execute
-    frame:
-  File "game/my_scripts/quick_menu.rpy", line 80, in execute
-    grid qm_grid_cols qm_grid_rows:
-  File "game/my_scripts/quick_menu.rpy", line 95, in execute
-    imagebutton:
-  File "game/my_scripts/quick_menu.rpy", line 95, in keywords
-    imagebutton:
-  File "renpy/python.py", line 1308, in py_eval
-    return py_eval_bytecode(code, globals, locals)
-           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
-  File "renpy/python.py", line 1301, in py_eval_bytecode
-    return eval(bytecode, globals, locals)
-           ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "game/my_scripts/quick_menu.rpy", line 100, in <module>
-    selected preferences.auto_forward
-             ^^^^^^^^^^^^^^^^^^^^^^^^
-AttributeError: 'Preferences' object has no attribute 'auto_forward'
+[Previous line repeated 1 more time]
+  File "renpy/display/screen.py", line 508, in visit_all
+    self.child.visit_all(callback, seen=None)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "renpy/display/displayable.py", line 460, in visit_all
+    d.visit_all(callback, seen)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "renpy/display/displayable.py", line 460, in visit_all
+    d.visit_all(callback, seen)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "renpy/display/displayable.py", line 460, in visit_all
+    d.visit_all(callback, seen)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^
+[Previous line repeated 1 more time]
+  File "renpy/display/displayable.py", line 451, in visit_all
+    for d in self.visit():
+             ~~~~~~~~~~^^ 
+  File "renpy/display/image.py", line 799, in visit
+    self.find_target()
+    ~~~~~~~~~~~~~~~~^^
+  File "renpy/display/image.py", line 687, in find_target
+    raise Exception("In DynamicImage %r: %r" % (self.name, e))
+Exception: In DynamicImage 'gui/button/quick_menu/[tp_icon_prefix]_idle.png': NameError("name 'tp_icon_prefix' is not defined")
 
 Windows-11-10.0.26200-SP0 AMD64
 Ren'Py 8.5.3.26051504
 Rounded RenPy GUI 1.2.0
-Thu Sep  3 21:25:27 2026
+Thu Sep  3 22:28:38 2026

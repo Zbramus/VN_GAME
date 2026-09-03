@@ -1,0 +1,10 @@
+﻿I'm sorry, but errors were detected in your script. Please correct the
+errors listed below, and try again.
+
+
+File "game/my_scripts/hud_map_time.rpy", line 119: keyword argument 'xalign' appears more than once in a text statement.
+    xalign 0.5
+          ^
+
+Ren'Py Version: Ren'Py 8.5.3.26051504
+Thu Sep  3 23:04:34 2026

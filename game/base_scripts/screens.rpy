@@ -240,7 +240,6 @@ style choice_button_text is default:
 # ============================================================
 # QUICK MENU — hamburger cliquable + dropdown
 # Remplace le screen "quick_menu" par défaut de screens.rpy
-# Basé sur les assets réels de game/gui/button/quick_menu/
 # ============================================================
 
 # ------------------------------------------------------------
@@ -248,13 +247,6 @@ style choice_button_text is default:
 # ------------------------------------------------------------
 # quick_menu_background.png fait 168x310px, avec un dégradé
 # d'ombre transparent tout autour du rectangle violet arrondi.
-#
-# Mesuré directement sur ton PNG (scan du canal alpha) :
-#   - largeur du flou d'ombre sur les bords plats : 13-14px
-#   - les 4 coins arrondis sont symétriques et ont besoin de
-#     36-37px pour être entièrement contenus (rayon + flou compris)
-# -> la bordure du Frame doit donc faire AU MOINS 37px sur
-#    chaque côté pour ne rien déformer. Je mets 38 par sécurité.
 define qm_border = 38
 
 define qm_background = Frame(
@@ -277,14 +269,6 @@ define qm_panel_padding = 13   # ~ (168 - 2*71) / 2, marge interne du panneau
 # ------------------------------------------------------------
 # 3) LE SCREEN
 # ------------------------------------------------------------
-# ATTENTION : je n'ai pas trouvé d'asset "hamburger" (☰) dans
-# game/gui/button/quick_menu/ sur le repo — seuls les 8 boutons
-# du menu + le fond y sont. Il faudra soit :
-#   a) ajouter hamburger_idle.png / hamburger_hover.png dans ce
-#      dossier (mêmes conventions que le reste : idle/hover), soit
-#   b) me dire le nom exact si tu l'as mis ailleurs.
-# Le code ci-dessous suppose l'option (a).
-
 screen quick_menu():
 
     zorder 100
@@ -303,16 +287,16 @@ screen quick_menu():
             action SetScreenVariable("qm_expanded", False)
 
     fixed:
-        xalign 1.0
-        yalign 1.0
+        xalign 0.0
+        yalign 0.0
         xsize max(qm_button_size, qm_grid_cols * qm_button_size + (qm_grid_cols - 1) * qm_grid_spacing + 2 * qm_panel_padding)
         ysize qm_button_size + qm_grid_rows * qm_button_size + (qm_grid_rows - 1) * qm_grid_spacing + 2 * qm_panel_padding + 6
 
         # --- Panneau déroulant, affiché seulement si qm_expanded ---
         if qm_expanded:
             frame:
-                xalign 1.0
-                yalign 0.0
+                xpos config.screen_width-352
+                ypos config.screen_height-378
                 background qm_background
                 padding (qm_panel_padding, qm_panel_padding, qm_panel_padding, qm_panel_padding)
 
@@ -364,12 +348,13 @@ screen quick_menu():
                         action [ShowMenu("preferences"), SetScreenVariable("qm_expanded", False)]
 
         # --- Bouton hamburger : CLIC pour ouvrir/fermer ---
-        imagebutton:
-            xalign 1.0
-            yalign 1.0
-            idle "gui/button/quick_menu/menu_idle.png"
-            hover "gui/button/quick_menu/menu_hover.png"
-            action ToggleScreenVariable("qm_expanded")
+    imagebutton:
+        xycenter (0.5,0.5)
+        xpos config.screen_width-380
+        ypos config.screen_height-85
+        idle "gui/button/quick_menu/menu_idle.png"
+        hover "gui/button/quick_menu/menu_hover.png"
+        action ToggleScreenVariable("qm_expanded")
 
 
 
@@ -388,6 +373,154 @@ style quick_button:
 
 style quick_button_text:
     properties gui.button_text_properties("quick_button")
+
+## ============================================================================
+## À COLLER DANS screens.rpy, juste après le bloc du quick_menu
+## (après le "config.overlay_screens.append("quick_menu")" et les styles
+## quick_button / quick_button_text, avant "## Main and Game Menu Screens")
+## ============================================================================
+
+################################################################################
+## HUD — Map & Time Period
+################################################################################
+## Deux boutons superposés en haut à droite de l'écran :
+##   - map          -> ouvre le menu de voyage (pour l'instant un écran TODO)
+##   - time_period   -> affiche le créneau actuel, un clic "épingle" le tooltip
+##                      de date jusqu'au prochain clic
+
+init python:
+    config.overlay_screens.append("hud_bottom_left")
+
+# TIME_SLOT_NAMES (time_system.rpy) ne correspond pas 1:1 aux noms de fichiers
+# que tu as poussés (ex: "Late Afternoon" -> "Afternoon_idle.png",
+# "Morning" -> "Morning_mini_idle.png"). Cette table fait la conversion.
+define TIME_SLOT_ICON_PREFIX = {
+    "Morning": "Morning",
+    "Midday": "Midday",
+    "Late Afternoon": "Afternoon",
+    "Evening": "Evening",
+    "Night": "Night",
+}
+
+# Fonds 9-slice, mesurés directement sur tes PNG (bords transparents/alpha) :
+#   Tooltip_left.png (250x71, translucide) : arrondi à gauche, plat à droite
+#     (le bord droit vient se glisser sous le bouton qu'il commente)
+#   Frame_mini_white.png (146x35, blanc opaque) : pilule symétrique
+define hud_tooltip_bg = Frame("gui/button/Tooltip_left.png", 25, 35, 65, 49, tile=False)
+define hud_label_bg   = Frame("gui/button/Frame_mini_white.png", 13, 17, tile=False)
+
+# Réglages de position/recouvrement — à ajuster visuellement en jeu, ce sont
+# des points de départ raisonnables, pas des valeurs mesurées.
+define hud_icon_size       = 71
+define hud_tooltip_overlap = 12   # de combien le tooltip se glisse SOUS le bouton
+define hud_label_yoffset   = 50   # décalage vertical de la pastille de nom sous l'icône
+define hud_tooltip_room    = 400  # largeur dispo pour le tooltip, doit être assez large pour ne jamais couper le texte
+
+
+screen hud_bottom_left():
+    
+    zorder 90
+
+    default map_hovering = False
+    default tp_hovering  = False
+    default tp_pinned    = False
+
+    python:
+        tp_icon_prefix = TIME_SLOT_ICON_PREFIX[game_time.slot_name]
+        tp_date_text = "{}, {}".format(game_time.weekday_name, game_time.date.strftime("%d/%m/%Y"))
+
+
+
+    # ------------------------------------------------------------
+    # Bouton Map
+    # ------------------------------------------------------------
+
+    # Tooltip de map : visible au survol
+    if map_hovering:
+        frame:
+            background hud_tooltip_bg
+            padding (23, 8, 40, 21)
+            xycenter (0.5,0.5)
+            xalign 1.0
+            xpos 345
+            ypos config.screen_height-145
+
+            text _("Travel elsewhere") size 28 color "#3a2f4d" xalign 0.5 yalign 0.5 layout "nobreak" at show_hide_dissolve_full_instant_speed
+
+    imagebutton:
+        xycenter (0.5,0.5)
+        xpos 345
+        ypos config.screen_height-150
+        idle "gui/button/quick_menu/map_idle.png"
+        hover "gui/button/quick_menu/map_hover.png"
+        insensitive "gui/button/quick_menu/map_insensitive.png"
+        hovered SetScreenVariable("map_hovering", True)
+        unhovered SetScreenVariable("map_hovering", False)
+        action Show("travel_menu")
+
+    # ------------------------------------------------------------
+    # Bouton Time Period
+    # ------------------------------------------------------------
+
+    # Tooltip de date : visible au survol OU épinglé par un clic
+    if tp_hovering or tp_pinned:
+        frame:
+            background hud_tooltip_bg
+            padding (23, 8, 40, 21)
+            xycenter (0.5,0.5)
+            xalign 1.0
+            xpos 380
+            ypos config.screen_height-85
+
+            text tp_date_text size 28 color "#3a2f4d" xalign 0.5 yalign 0.5 layout "nobreak" at show_hide_dissolve_full_instant_speed
+
+    imagebutton:
+        xycenter (0.5,0.5)
+        xpos 380
+        ypos config.screen_height-85
+        idle "gui/button/quick_menu/%s_idle.png" % tp_icon_prefix
+        hover "gui/button/quick_menu/%s_hover.png" % tp_icon_prefix
+        hovered SetScreenVariable("tp_hovering", True)
+        unhovered SetScreenVariable("tp_hovering", False)
+        action ToggleScreenVariable("tp_pinned")
+
+    # Pastille de nom du créneau, toujours visible, sous l'icône
+    frame:
+        xycenter (0.5,0.5)
+        xpos 380
+        ypos config.screen_height-58
+        background hud_label_bg
+        padding(13,0)
+
+        text game_time.slot_name color "#3a2f4d" xalign 0.5 yalign 0.5 size 22
+
+
+################################################################################
+## Travel Menu — PLACEHOLDER
+################################################################################
+## Remplace l'ancien choix "go elsewhere" du menu texte plat. Pour l'instant
+## un simple panneau "TODO" en attendant la vraie carte cliquable.
+
+screen travel_menu():
+
+    modal True
+    zorder 200
+
+    # Fond assombri, cliquable pour fermer
+    button:
+        xfill True
+        yfill True
+        background "#000000aa"
+        action Hide("travel_menu")
+
+    frame:
+        style "frame"   ## réutilise gui/frame.png, déjà en 9-slice (gui.frame_borders)
+        xalign 0.5
+        yalign 0.5
+        xsize int(config.screen_width * 0.8)
+        ysize int(config.screen_height * 0.8)
+
+        text _("TODO") xalign 0.5 yalign 0.5 size 80 color "#3a2f4d"
 
 
 ################################################################################
