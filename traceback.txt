@@ -1,0 +1,121 @@
+﻿I'm sorry, but an uncaught exception occurred.
+
+While running game code:
+  File "game/my_scripts/main_loop.rpy", line 56, in script call
+    call expression instant_event.label from _call_expr_main_loop_instant
+  File "game/my_scripts/events.rpy", line 131, in script
+    "// Placeholder event: intro_wake_up"
+  File "game/my_scripts/quick_menu.rpy", line 49, in execute
+    screen quick_menu():
+  File "game/my_scripts/quick_menu.rpy", line 49, in execute
+    screen quick_menu():
+  File "game/my_scripts/quick_menu.rpy", line 66, in execute
+    fixed:
+  File "game/my_scripts/quick_menu.rpy", line 73, in execute
+    if qm_expanded:
+  File "game/my_scripts/quick_menu.rpy", line 74, in execute
+    frame:
+  File "game/my_scripts/quick_menu.rpy", line 80, in execute
+    grid qm_grid_cols qm_grid_rows:
+  File "game/my_scripts/quick_menu.rpy", line 95, in execute
+    imagebutton:
+  File "game/my_scripts/quick_menu.rpy", line 95, in keywords
+    imagebutton:
+  File "game/my_scripts/quick_menu.rpy", line 100, in <module>
+    selected preferences.auto_forward
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Preferences' object has no attribute 'auto_forward'
+
+-- Full Traceback ------------------------------------------------------------
+
+Traceback (most recent call last):
+  File "game/my_scripts/main_loop.rpy", line 56, in script call
+    call expression instant_event.label from _call_expr_main_loop_instant
+  File "game/my_scripts/events.rpy", line 131, in script
+    "// Placeholder event: intro_wake_up"
+  File "renpy/ast.py", line 2935, in execute
+    Say.execute(self)
+    ~~~~~~~~~~~^^^^^^
+  File "renpy/ast.py", line 994, in execute
+    renpy.exports.say(who, what, *args, **kwargs)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "renpy/exports/sayexports.py", line 129, in say
+    who(what, *args, **kwargs)
+    ~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "renpy/character.py", line 1565, in __call__
+    self.do_display(who, what, cb_args=self.cb_args, dtt=dtt, **display_args)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "renpy/character.py", line 1220, in do_display
+    display_say(who, what, self.do_show, **display_args)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "renpy/character.py", line 902, in display_say
+    rv = renpy.ui.interact(mouse="say", type=type, roll_forward=roll_forward)
+         ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "renpy/ui.py", line 306, in interact
+    rv = renpy.game.interface.interact(roll_forward=roll_forward, **kwargs)
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "renpy/display/core.py", line 2163, in interact
+    repeat, rv = self.interact_core(
+                 ~~~~~~~~~~~~~~~~~~^
+        preloads=preloads,
+        ^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+        **kwargs,
+        ^^^^^^^^^
+    )
+    ^
+  File "renpy/display/core.py", line 2709, in interact_core
+    root_widget.visit_all(lambda d: d.per_interact())
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "renpy/display/displayable.py", line 460, in visit_all
+    d.visit_all(callback, seen)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "renpy/display/displayable.py", line 460, in visit_all
+    d.visit_all(callback, seen)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "renpy/display/displayable.py", line 460, in visit_all
+    d.visit_all(callback, seen)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "renpy/display/screen.py", line 503, in visit_all
+    callback(self)
+    ~~~~~~~~^^^^^^
+  File "renpy/display/core.py", line 2709, in <lambda>
+    root_widget.visit_all(lambda d: d.per_interact())
+                                    ~~~~~~~~~~~~~~^^ 
+  File "renpy/display/screen.py", line 514, in per_interact
+    self.update()
+    ~~~~~~~~~~~^^
+  File "renpy/display/screen.py", line 715, in update
+    self.screen.function(**self.scope)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "game/my_scripts/quick_menu.rpy", line 49, in execute
+    screen quick_menu():
+  File "game/my_scripts/quick_menu.rpy", line 49, in execute
+    screen quick_menu():
+  File "game/my_scripts/quick_menu.rpy", line 66, in execute
+    fixed:
+  File "game/my_scripts/quick_menu.rpy", line 73, in execute
+    if qm_expanded:
+  File "game/my_scripts/quick_menu.rpy", line 74, in execute
+    frame:
+  File "game/my_scripts/quick_menu.rpy", line 80, in execute
+    grid qm_grid_cols qm_grid_rows:
+  File "game/my_scripts/quick_menu.rpy", line 95, in execute
+    imagebutton:
+  File "game/my_scripts/quick_menu.rpy", line 95, in keywords
+    imagebutton:
+  File "renpy/python.py", line 1308, in py_eval
+    return py_eval_bytecode(code, globals, locals)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "renpy/python.py", line 1301, in py_eval_bytecode
+    return eval(bytecode, globals, locals)
+           ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "game/my_scripts/quick_menu.rpy", line 100, in <module>
+    selected preferences.auto_forward
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Preferences' object has no attribute 'auto_forward'
+
+Windows-11-10.0.26200-SP0 AMD64
+Ren'Py 8.5.3.26051504
+Rounded RenPy GUI 1.2.0
+Thu Sep  3 21:25:27 2026
