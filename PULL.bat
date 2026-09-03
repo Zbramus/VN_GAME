@@ -1,7 +1,12 @@
 @echo off
+cd /d "%~dp0"
+
 echo === Recuperation des derniers changements ===
 
 git pull
+
+echo === Dechiffrement des images sensibles ===
+python pull_images.py
 
 echo === Nettoyage des fichiers temporaires Ren'Py ===
 

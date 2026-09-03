@@ -1,0 +1,7 @@
+# Un dossier par ligne, chemin relatif a la racine du projet
+# (le dossier ou se trouvent SAVE.bat / PULL.bat).
+# Les lignes vides et celles commencant par # sont ignorees.
+# Tout le contenu (recursif) de ces dossiers sera scanne.
+#
+# Exemples (a adapter a ta structure reelle) :
+game/images/characters

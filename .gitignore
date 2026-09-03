@@ -30,3 +30,6 @@ desktop.ini
 
 # Fichiers persistants du lanceur Ren'Py (préférences locales)
 game/persistent
+
+# Clé de chiffrement des images
+vncrypt_key.bin
